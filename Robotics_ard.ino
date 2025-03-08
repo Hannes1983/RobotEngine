@@ -29,6 +29,11 @@ String digOff2 = "dig2Off\n";
 String digOff3 = "dig3Off\n";
 String digOff4 = "dig4Off\n";
 
+String read5 = "read5";
+String read6 = "read6";
+String read7 = "read7";
+String read8 = "read8";
+
 
 void setup() {
   // initialize serial:
@@ -41,6 +46,12 @@ void setup() {
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
+  
+  pinMode(5, INPUT);
+  pinMode(6, INPUT);
+  pinMode(7, INPUT);
+  pinMode(8, INPUT);
+
   pinMode(13,OUTPUT);
 
 //
@@ -83,8 +94,46 @@ void loop() {
     }
     if (inputString == digOff4) {
       digitalWrite(4,LOW);
-      string_accepted = true;;
+      string_accepted = true;
     }
+    
+    if (inputString == read5) {
+       if (digitalRead(5) == HIGH) {
+          Serial.println("1");
+       }
+       else {
+          Serial.println("0");
+       }
+       string_accepted = true;
+    }
+    if (inputString == read6) {
+       if (digitalRead(6) == HIGH) {
+          Serial.println("1");
+       }
+       else {
+          Serial.println("0");
+       }
+       string_accepted = true;
+    }
+    if (inputString == read7) {
+       if (digitalRead(7) == HIGH) {
+          Serial.println("1");
+       }
+       else {
+          Serial.println("0");
+       }
+       string_accepted = true;
+    }
+    if (inputString == read8) {
+       if (digitalRead(8) == HIGH) {
+          Serial.println("1");
+       }
+       else {
+          Serial.println("0");
+       }
+       string_accepted = true;
+    }
+
     // clear the string:
     inputString = "";
     stringComplete = false;
@@ -95,9 +144,7 @@ void loop() {
       Serial.println("SK");
     }
   }
-  else {
-    Serial.println(inputString);
-  }
+  
   delay(500);
 }
 

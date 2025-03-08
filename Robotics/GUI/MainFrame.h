@@ -17,12 +17,15 @@ protected:
 	DECLARE_CLASS(MainFrame)
 private:
 	void OnDigitalButtonToggle(wxCommandEvent& event);
+	void OnQuitButtonClick(wxCommandEvent& event);
+
 	void Update();
 	wxPanel* mAnalogPanel;
 	wxPanel* mDigitalPanel;
 	wxLog* mLogger;
 
 	RobotEngine* mRobotEngineP = NULL;
+	wxButton* mQuitButton;
 	wxToggleButton* mDigital2Toggle;
 	std::thread* mUpdateThreadP;
 
