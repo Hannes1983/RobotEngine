@@ -20,6 +20,15 @@
 
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
+String digOn1 = "dig1On\n";
+String digOn2 = "dig2On\n";
+String digOn3 = "dig3On\n";
+String digOn4 = "dig4On\n";
+String digOff1 = "dig1Off\n";
+String digOff2 = "dig2Off\n";
+String digOff3 = "dig3Off\n";
+String digOff4 = "dig4Off\n";
+
 
 void setup() {
   // initialize serial:
@@ -28,7 +37,10 @@ void setup() {
   inputString.reserve(1000);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(1, OUTPUT);
   pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
   pinMode(13,OUTPUT);
 
 //
@@ -38,17 +50,50 @@ void setup() {
 }
 
 void loop() {
-  // print the string when a newline arrives:
   digitalWrite(13,HIGH);
+  bool string_accepted = false;
   if (stringComplete) {
-    Serial.println(inputString);
+    if (inputString == digOn1) {
+      digitalWrite(1,HIGH);
+      string_accepted = true;
+    }
+    if (inputString == digOff1) {
+      digitalWrite(1,LOW);
+       string_accepted = true;
+    }
+    if (inputString == digOn2) {
+      digitalWrite(2,HIGH);
+      string_accepted = true;
+    }
+    if (inputString == digOff2) {
+      digitalWrite(2,LOW);
+      string_accepted = true;
+    }
+    if (inputString == digOn3) {
+      digitalWrite(3,HIGH);
+      string_accepted = true;
+    }
+    if (inputString == digOff3) {
+      digitalWrite(3,LOW);
+      string_accepted = true;
+    }
+    if (inputString == digOn4) {
+      digitalWrite(4,HIGH);
+      string_accepted = true;
+    }
+    if (inputString == digOff4) {
+      digitalWrite(4,LOW);
+      string_accepted = true;;
+    }
     // clear the string:
     inputString = "";
-    digitalWrite(2, HIGH);
-    delay(5000);
-    digitalWrite(2, LOW);
     stringComplete = false;
-    Serial.println("OK");
+    if (string_accepted) {
+      Serial.println("OK");
+    }
+    else {
+      Serial.println("SK");
+    }
   }
   else {
     Serial.println(inputString);
