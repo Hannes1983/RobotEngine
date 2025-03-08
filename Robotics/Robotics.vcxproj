@@ -78,7 +78,8 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem></SubSystem>
+      <SubSystem>
+      </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -132,7 +133,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Backend\RobotEngine.cpp" />
     <ClCompile Include="GUI\App.cpp" />
+    <ClCompile Include="GUI\MainFrame.cpp" />
     <ClCompile Include="third-party\src\impl\list_ports\list_ports_linux.cc" />
     <ClCompile Include="third-party\src\impl\list_ports\list_ports_osx.cc" />
     <ClCompile Include="third-party\src\impl\list_ports\list_ports_win.cc" />
@@ -141,7 +144,9 @@
     <ClCompile Include="third-party\src\serial.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Backend\RobotEngine.hpp" />
     <ClInclude Include="GUI\App.h" />
+    <ClInclude Include="GUI\MainFrame.h" />
     <ClInclude Include="third-party\include\serial\impl\unix.h" />
     <ClInclude Include="third-party\include\serial\impl\win.h" />
     <ClInclude Include="third-party\include\serial\serial.h" />

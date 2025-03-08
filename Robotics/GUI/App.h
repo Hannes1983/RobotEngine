@@ -1,6 +1,7 @@
 #pragma once
 #include <wx/wx.h>
-#include "../third-party/include/serial/serial.h"
+#include "MainFrame.h"
+
 
 
 class App : public wxApp
