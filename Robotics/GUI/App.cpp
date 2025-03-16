@@ -6,7 +6,20 @@ wxIMPLEMENT_APP(App);
 bool App::OnInit() {
 
 	//Read arguments
-	wxFrame* mainFrame = new MainFrame("Robot Engine");
+	//Read arguments
+	int arg = 0;
+	wxString port = "COM3";
+	while (arg < wxApp::argc) {
+		wxString arg_str = wxApp::argv[arg];
+		if (arg_str == "-port") {
+			arg++;
+			port = wxApp::argv[arg];
+		}
+		arg++;
+	}
+
+
+	wxFrame* mainFrame = new MainFrame("Robot Engine",port);
 
 
 

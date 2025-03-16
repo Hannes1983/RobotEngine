@@ -3,7 +3,7 @@
 IMPLEMENT_CLASS(MainFrame, wxWindow)
 
 
-MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
+MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(nullptr, wxID_ANY, title) {
 	
 	//Logging
 	mLogger = new wxLogWindow(this, "Trace", true, false);
@@ -25,8 +25,7 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
 	
 
 
-	mRobotEngineP = new RobotEngine("COM3");
-	//mUpdateThreadP = new std::thread(&MainFrame::Update, this);
+	mRobotEngineP = new RobotEngine(port.ToStdString());
 
 	
 }
@@ -36,14 +35,14 @@ MainFrame::~MainFrame() {
 }
 
 void MainFrame::OnDigitalButtonToggle(wxCommandEvent& event) {
-	mRobotEngineP->SetDigital(mDigital2Toggle->GetValue());
+	PinState request(2, mDigital2Toggle->GetValue());
+	mRobotEngineP->SetWriteRequest(request);
 	if (mDigital2Toggle->GetValue()) {
 		mDigital2Toggle->SetLabelText("Dig2: ON");
 	}
 	else {
 		mDigital2Toggle->SetLabelText("Dig2: OFF");
 	}
-	mRobotEngineP->Update();
 }
 
 void MainFrame::OnQuitButtonClick(wxCommandEvent& event) {
@@ -56,20 +55,5 @@ void MainFrame::OnQuitButtonClick(wxCommandEvent& event) {
 	}
 	else {
 		return;
-	}
-}
-
-void MainFrame::Update() {
-
-	while (true) {
-		if (!mRobotEngineP->PortIsUp()) {
-			continue;
-		}
-		try {
-			mRobotEngineP->Update();
-		}
-		catch (...) {
-			wxLogError("MainFrame: Caught exception during update");
-		}
 	}
 }

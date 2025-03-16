@@ -4,64 +4,53 @@
 RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	try {
 		mArduinoComPortP = new serial::Serial(_port);
+		mInputReaderP = new InputReader(mArduinoComPortP);
+		mOutputReaderP = new OutputReader(mArduinoComPortP);
 		mComPortIsUp = true;
 		mArduinoComPortP->flushOutput();
 	}
 	catch (...) {
-		wxLogError("RE::Constructor: Port could not be opened!");
+		wxLogError("RE::Constructor: Port %s could not be opened!", _port);
 		delete mArduinoComPortP;
 		mArduinoComPortP = NULL;
 		mComPortIsUp = false;
 	}
 	if (mArduinoComPortP != NULL && mArduinoComPortP->isOpen() ) {
-		wxLogMessage("RE::Constructor: Port open succesfully!");
+		wxLogMessage("RE::Constructor: Port %s open succesfully!", _port);
 	}
 	else {
 		wxLogError("RE::Constructor: Port could not be opened!");
 	}
-	mDigitalIn2Active = false;
-
+	
+	
+	mUpdateThreadP = new std::thread(&RobotEngine::Update, this);
 
 }
 
 RobotEngine::~RobotEngine() {
 	mArduinoComPortP->close();
 	delete mArduinoComPortP;
+	delete mInputReaderP;
 
 }
 
 void RobotEngine::Update() {
-	mArduinoComPortP->flushInput();
-	std::string input = "", repsonse = "NK";
-	if (mDigitalIn2Active) {
-		int count = 0;
-		input = "dig2On\n";
-		while (count < 10 && repsonse != "OK") {
-			size_t bytes_wrote = mArduinoComPortP->write(input);
-			repsonse = mArduinoComPortP->read(2);
-			wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
-			wxLogMessage("RE: Reponse %s", repsonse);
+	wxLogMessage("RE: Update thread started");
+	mWriteCurrRequest.pending = false;
+	while (true) {
+		mRequestMutex.lock();
+		if (mComPortIsUp && mWriteCurrRequest.pending) {
+			OUTPUTERROR err;
+			
+			if (mOutputReaderP->WriteToNode(mWriteCurrRequest, &err)) {
+			}
+			else {
+				wxLogMessage("RE: Request failed, err code %d", static_cast<int>(err));
+			}
+			mWriteCurrRequest.pending = false;
+		}
+		mRequestMutex.unlock();
+		
+	}
 
-			count += 1;
-		}
-		if (count > 9 && repsonse != "OK") {
-			wxLogError("RE: digital write timeout");
-		}
-		mArduinoComPortP->flush();
-	}
-	else {
-		int count = 0;
-		input = "dig2Off\n";
-		while (count < 10 && repsonse != "OK") {
-			size_t bytes_wrote = mArduinoComPortP->write(input);
-			repsonse = mArduinoComPortP->read(2);
-			wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
-			wxLogMessage("RE: Reponse %s", repsonse);
-			count += 1;
-		}
-		if (count > 9 && repsonse != "OK") {
-			wxLogError("RE: digital write timeout");
-		}
-		mArduinoComPortP->flush();
-	}
 }

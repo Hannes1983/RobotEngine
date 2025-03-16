@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Backend\InputReader.cpp" />
+    <ClCompile Include="Backend\OutputReader.cpp" />
     <ClCompile Include="Backend\RobotEngine.cpp" />
     <ClCompile Include="GUI\App.cpp" />
     <ClCompile Include="GUI\MainFrame.cpp" />
@@ -144,6 +146,9 @@
     <ClCompile Include="third-party\src\serial.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Backend\Constants.hpp" />
+    <ClInclude Include="Backend\InputReader.h" />
+    <ClInclude Include="Backend\OutputReader.h" />
     <ClInclude Include="Backend\RobotEngine.hpp" />
     <ClInclude Include="GUI\App.h" />
     <ClInclude Include="GUI\MainFrame.h" />

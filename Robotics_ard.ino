@@ -62,39 +62,39 @@ void setup() {
 
 void loop() {
   digitalWrite(13,HIGH);
-  bool string_accepted = false;
+  bool write_string_accepted = false;
   if (stringComplete) {
     if (inputString == digOn1) {
       digitalWrite(1,HIGH);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     if (inputString == digOff1) {
       digitalWrite(1,LOW);
-       string_accepted = true;
+       write_string_accepted = true;
     }
     if (inputString == digOn2) {
       digitalWrite(2,HIGH);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     if (inputString == digOff2) {
       digitalWrite(2,LOW);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     if (inputString == digOn3) {
       digitalWrite(3,HIGH);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     if (inputString == digOff3) {
       digitalWrite(3,LOW);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     if (inputString == digOn4) {
       digitalWrite(4,HIGH);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     if (inputString == digOff4) {
       digitalWrite(4,LOW);
-      string_accepted = true;
+      write_string_accepted = true;
     }
     
     if (inputString == read5) {
@@ -104,7 +104,6 @@ void loop() {
        else {
           Serial.println("0");
        }
-       string_accepted = true;
     }
     if (inputString == read6) {
        if (digitalRead(6) == HIGH) {
@@ -113,7 +112,6 @@ void loop() {
        else {
           Serial.println("0");
        }
-       string_accepted = true;
     }
     if (inputString == read7) {
        if (digitalRead(7) == HIGH) {
@@ -122,7 +120,6 @@ void loop() {
        else {
           Serial.println("0");
        }
-       string_accepted = true;
     }
     if (inputString == read8) {
        if (digitalRead(8) == HIGH) {
@@ -131,13 +128,12 @@ void loop() {
        else {
           Serial.println("0");
        }
-       string_accepted = true;
     }
 
     // clear the string:
     inputString = "";
     stringComplete = false;
-    if (string_accepted) {
+    if (write_string_accepted) {
       Serial.println("OK");
     }
     else {

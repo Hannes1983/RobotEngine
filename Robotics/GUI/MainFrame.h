@@ -3,14 +3,13 @@
 #include <wx/graphics.h>
 #include <wx/dcbuffer.h>
 #include <wx/tglbtn.h>
-#include <thread>
 #include "../Backend/RobotEngine.hpp"
 
 
 class MainFrame : public  wxFrame
 {
 public:
-	MainFrame(const wxString& title);
+	MainFrame(const wxString& title, const wxString& port = "");
 	~MainFrame();
 
 protected:
@@ -19,7 +18,6 @@ private:
 	void OnDigitalButtonToggle(wxCommandEvent& event);
 	void OnQuitButtonClick(wxCommandEvent& event);
 
-	void Update();
 	wxPanel* mAnalogPanel;
 	wxPanel* mDigitalPanel;
 	wxLog* mLogger;
@@ -27,9 +25,6 @@ private:
 	RobotEngine* mRobotEngineP = NULL;
 	wxButton* mQuitButton;
 	wxToggleButton* mDigital2Toggle;
-	std::thread* mUpdateThreadP;
-
-
 
 };
 
