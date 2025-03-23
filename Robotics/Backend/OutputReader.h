@@ -1,6 +1,7 @@
 #pragma once
 #include "../third-party/include/serial/serial.h"
 #include "Constants.hpp"
+#include <list>
 #include <wx/wx.h>
 
 

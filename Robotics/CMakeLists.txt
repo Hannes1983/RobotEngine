@@ -36,11 +36,9 @@ endif()
 add_library(MainFrame GUI/Mainframe.cpp GUI/Mainframe.h)
 add_executable(RobotEngine GUI/App.cpp GUI/App.h)
 
-target_link_libraries(RobotEngine PUBLIC Inputs)
-target_link_libraries(RobotEngine PUBLIC Outputs)
-target_link_libraries(RobotEngine PUBLIC Engine)
+target_link_libraries(Backend PUBLIC ${wxWidgets_LIBRARIES})
+target_link_libraries(RobotEngine PUBLIC Backend)
 target_link_libraries(RobotEngine PUBLIC serial)
-target_link_libraries(RobotEngine PUBLIC ${wxWidgets_LIBRARIES})
 target_link_libraries(RobotEngine PUBLIC MainFrame)
 
 

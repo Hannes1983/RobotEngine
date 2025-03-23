@@ -1,3 +1,1 @@
-add_library(Inputs InputReader.cpp)
-add_library(Outputs OutputReader.cpp)
-add_library(Engine RobotEngine.cpp)
+add_library(Backend InputReader.cpp InputReader.h OutputReader.cpp OutputReader.h RobotEngine.cpp RobotEngine.hpp Constants.hpp)
