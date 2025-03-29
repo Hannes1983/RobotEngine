@@ -12,8 +12,11 @@ public:
 	OutputReader(serial::Serial* _comPortP);
 	~OutputReader();
 	bool WriteToNode(PinState _request, OUTPUTERROR* _error);
+	const std::list<PinState> GetPinstates() const { return mPinStates; }
 
 private:
+
+	void ReadPinStates();
 	serial::Serial* mArduinoComPortP = NULL;
 	std::list<PinState> mPinStates;
 };

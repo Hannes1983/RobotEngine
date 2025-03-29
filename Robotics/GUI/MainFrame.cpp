@@ -20,9 +20,21 @@ MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(null
 	mQuitButton = new wxButton(mAnalogPanel, wxID_ANY, "Exit", wxPoint(1500, 50), wxSize(50, 35));
 	mQuitButton->Bind(wxEVT_BUTTON, &MainFrame::OnQuitButtonClick, this);
 
-	mDigital2Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig2: OFF", wxPoint(50, 50), wxSize(150, 35));
-	mDigital2Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this);
+
+
+	mDigital1Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig1: OFF", wxPoint(50, 50), wxSize(150, 35));
+	mDigital1Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(1));
+	mDigital2Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig2: OFF", wxPoint(250, 50), wxSize(150, 35));
+	mDigital2Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(2));
+	mDigital3Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig3: OFF", wxPoint(450, 50), wxSize(150, 35));
+	mDigital3Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(3));
+	mDigital4Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig4: OFF", wxPoint(650, 50), wxSize(150, 35));
+	mDigital4Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(4));
 	
+	mDigital1Toggle->SetBackgroundColour(wxColour(*wxRED));
+	mDigital2Toggle->SetBackgroundColour(wxColour(*wxRED));
+	mDigital3Toggle->SetBackgroundColour(wxColour(*wxRED));
+	mDigital4Toggle->SetBackgroundColour(wxColour(*wxRED));
 
 
 	mRobotEngineP = new RobotEngine(port.ToStdString());
@@ -35,14 +47,66 @@ MainFrame::~MainFrame() {
 }
 
 void MainFrame::OnDigitalButtonToggle(wxCommandEvent& event) {
-	PinState request(2, mDigital2Toggle->GetValue());
+	//Get userData
+	ButtonArg* data = static_cast<ButtonArg*>(event.GetEventUserData());
+	PinState request;
+	switch (data->buttonNumber) {
+		case 1:
+			request.index = 1;
+			request.isOn = mDigital1Toggle->GetValue();
+			if (mDigital1Toggle->GetValue()) {
+				mDigital1Toggle->SetLabelText("Dig1: ON");
+				mDigital1Toggle->SetBackgroundColour(wxColour(*wxGREEN));
+			}
+			else {
+				mDigital1Toggle->SetLabelText("Dig1: OFF");
+				mDigital1Toggle->SetBackgroundColour(wxColour(*wxRED));
+			}
+			break;
+		case 2:
+			request.index = 2;
+			request.isOn = mDigital2Toggle->GetValue();
+			if (mDigital2Toggle->GetValue()) {
+				mDigital2Toggle->SetLabelText("Dig2: ON");
+				mDigital2Toggle->SetBackgroundColour(wxColour(*wxGREEN));
+			}
+			else {
+				mDigital2Toggle->SetLabelText("Dig2: OFF");
+				mDigital2Toggle->SetBackgroundColour(wxColour(*wxRED));
+			}
+			break;
+		case 3:
+			request.index = 3;
+			request.isOn = mDigital3Toggle->GetValue();
+			if (mDigital3Toggle->GetValue()) {
+				mDigital3Toggle->SetLabelText("Dig3: ON");
+				mDigital3Toggle->SetBackgroundColour(wxColour(*wxGREEN));
+			}
+			else {
+				mDigital3Toggle->SetLabelText("Dig3: OFF");
+				mDigital3Toggle->SetBackgroundColour(wxColour(*wxRED));
+			}
+			break;
+		case 4:
+			request.index = 4;
+			request.isOn = mDigital4Toggle->GetValue();
+			if (mDigital4Toggle->GetValue()) {
+				mDigital4Toggle->SetLabelText("Dig4: ON");
+				mDigital4Toggle->SetBackgroundColour(wxColour(*wxGREEN));
+			}
+			else {
+				mDigital4Toggle->SetLabelText("Dig4: OFF");
+				mDigital4Toggle->SetBackgroundColour(wxColour(*wxRED));
+			}
+			break;
+		default:
+			wxLogMessage("DigBtn request index %d out of range", data->buttonNumber);
+			return;
+			break;
+
+	}
 	mRobotEngineP->SetWriteRequest(request);
-	if (mDigital2Toggle->GetValue()) {
-		mDigital2Toggle->SetLabelText("Dig2: ON");
-	}
-	else {
-		mDigital2Toggle->SetLabelText("Dig2: OFF");
-	}
+	
 }
 
 void MainFrame::OnQuitButtonClick(wxCommandEvent& event) {

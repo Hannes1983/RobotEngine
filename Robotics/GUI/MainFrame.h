@@ -5,6 +5,11 @@
 #include <wx/tglbtn.h>
 #include "../Backend/RobotEngine.hpp"
 
+// Struct for passing arguments in Bind()
+struct ButtonArg : public wxObject {
+	ButtonArg(int nbr = 0) { buttonNumber = nbr; }
+	int buttonNumber;
+};
 
 class MainFrame : public  wxFrame
 {
@@ -24,7 +29,10 @@ private:
 
 	RobotEngine* mRobotEngineP = NULL;
 	wxButton* mQuitButton;
+	wxToggleButton* mDigital1Toggle;
 	wxToggleButton* mDigital2Toggle;
+	wxToggleButton* mDigital3Toggle;
+	wxToggleButton* mDigital4Toggle;
 
 };
 

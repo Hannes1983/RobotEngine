@@ -50,6 +50,7 @@ void RobotEngine::Update() {
 			mWriteCurrRequest.pending = false;
 		}
 		mRequestMutex.unlock();
+		Sleep(10);
 		
 	}
 
