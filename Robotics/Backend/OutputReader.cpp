@@ -18,23 +18,29 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 		*_error = OUTPUTERROR::OUTPUT_IND_OOR;
 		return false;
 	}
-	std::string input = "dig" + std::to_string(_request.index);
-	input += _request.isOn ? "On\n" : "Off\n";
+	std::string input = std::to_string(_request.index) + "1";
+	input += _request.isOn ? "1\n" : "0\n";
 	wxLogMessage("OPR: Parsing request %s", input);
-	std::string repsonse = "NK";
+	std::string repsonse = "00000000";
 	int count = 0;
-	while (count < 10 && repsonse != "OK") {
+	while (count < 10 && repsonse[6] != '1') {
 		size_t bytes_wrote = mArduinoComPortP->write(input);
-		repsonse = mArduinoComPortP->read(2);
+		repsonse = mArduinoComPortP->read(8);
 		wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
 		wxLogMessage("RE: Response %s", repsonse);
 		count += 1;
 	}
-	if (count > 9 && repsonse != "OK") {
+	if (count > 9 && repsonse[6] != '1') {
+		wxLogMessage("OPR: Write timeout, error %s", repsonse);
 		*_error = OUTPUTERROR::WRITE_TIME_OUT;
 		return false;
 	}
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
 	mArduinoComPortP->flush();
 	return true;
+}
+
+void OutputReader::ReadPinStates() {
+	mArduinoComPortP->flushInput();
+
 }

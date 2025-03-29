@@ -20,20 +20,13 @@
 
 String inputString = "";         // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
-String digOn1 = "dig1On\n";
-String digOn2 = "dig2On\n";
-String digOn3 = "dig3On\n";
-String digOn4 = "dig4On\n";
-String digOff1 = "dig1Off\n";
-String digOff2 = "dig2Off\n";
-String digOff3 = "dig3Off\n";
-String digOff4 = "dig4Off\n";
+//Errorcodes
+// bit 7 : pin index out of range
+// bit 6 : value out of range
 
-String read5 = "read5";
-String read6 = "read6";
-String read7 = "read7";
-String read8 = "read8";
-
+//Return values
+// bit 1: request process done
+// bit 0: pin state
 
 void setup() {
   // initialize serial:
@@ -58,85 +51,48 @@ void setup() {
 
 void loop() {
   digitalWrite(13,HIGH);
-  bool write_string_accepted = false;
+  const String noError ="00000000";
+  const String test = "20";
   if (stringComplete) {
-    if (inputString == digOn1) {
-      digitalWrite(1,HIGH);
-      write_string_accepted = true;
-    }
-    if (inputString == digOff1) {
-      digitalWrite(1,LOW);
-       write_string_accepted = true;
-    }
-    if (inputString == digOn2) {
-      digitalWrite(2,HIGH);
-      write_string_accepted = true;
-    }
-    if (inputString == digOff2) {
-      digitalWrite(2,LOW);
-      write_string_accepted = true;
-    }
-    if (inputString == digOn3) {
-      digitalWrite(3,HIGH);
-      write_string_accepted = true;
-    }
-    if (inputString == digOff3) {
-      digitalWrite(3,LOW);
-      write_string_accepted = true;
-    }
-    if (inputString == digOn4) {
-      digitalWrite(4,HIGH);
-      write_string_accepted = true;
-    }
-    if (inputString == digOff4) {
-      digitalWrite(4,LOW);
-      write_string_accepted = true;
-    }
-    
-    if (inputString == read5) {
-       if (digitalRead(5) == HIGH) {
-          Serial.println("1");
-       }
-       else {
-          Serial.println("0");
-       }
-    }
-    if (inputString == read6) {
-       if (digitalRead(6) == HIGH) {
-          Serial.println("1");
-       }
-       else {
-          Serial.println("0");
-       }
-    }
-    if (inputString == read7) {
-       if (digitalRead(7) == HIGH) {
-          Serial.println("1");
-       }
-       else {
-          Serial.println("0");
-       }
-    }
-    if (inputString == read8) {
-       if (digitalRead(8) == HIGH) {
-          Serial.println("1");
-       }
-       else {
-          Serial.println("0");
-       }
-    }
+    bool stringAccepted = true;
+    uint8_t pin = static_cast<uint8_t>(inputString[0] - '0');
+    bool write = (inputString[1] == '1');
+    String retStr = noError;
+    if (pin < 0 || pin > 13) {
+      retStr[0] = '1';
 
-    // clear the string:
+    }
+    if (inputString[2] != '0' && inputString[2] != '1') {
+      retStr[1] = '1';
+    }
+    if (retStr != noError) {
+      Serial.println(retStr);
+      inputString = "";
+      retStr[4] = '1';
+      stringComplete = false;
+      stringAccepted = false;
+    }
+    if (write && stringAccepted) {
+      if (inputString[2] == '1') {
+        digitalWrite(pin,HIGH);
+      }
+      else {
+        digitalWrite(pin,LOW);
+      }
+      retStr[6] = '1';
+      retStr[7] = inputString[2];
+    }
+    else if (stringAccepted) {
+      retStr[7] = digitalRead(pin) == HIGH ? '1' : '0';
+      retStr[6] = '1';
+    }
+    Serial.println(retStr);
     inputString = "";
     stringComplete = false;
-    if (write_string_accepted) {
-      Serial.println("OK");
-    }
-    else {
-      Serial.println("SK");
-    }
+   
   }
-  
+
+
   delay(500);
 }
 
