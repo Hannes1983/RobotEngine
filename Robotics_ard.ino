@@ -52,7 +52,6 @@ void setup() {
 void loop() {
   digitalWrite(13,HIGH);
   const String noError ="00000000";
-  const String test = "20";
   if (stringComplete) {
     bool stringAccepted = true;
     uint8_t pin = static_cast<uint8_t>(inputString[0] - '0');
@@ -66,9 +65,7 @@ void loop() {
       retStr[1] = '1';
     }
     if (retStr != noError) {
-      Serial.println(retStr);
       inputString = "";
-      retStr[4] = '1';
       stringComplete = false;
       stringAccepted = false;
     }

@@ -3,9 +3,6 @@
 
 OutputReader::OutputReader(serial::Serial* _comPortP) {
 	mArduinoComPortP = _comPortP;
-	for (int pin = MIN_OUTPUT_INDEX; pin < MAX_OUTPUT_INDEX; pin++) {
-		mPinStates.push_back(PinState(pin, false));
-	}
 }
 OutputReader::~OutputReader() {
 	mArduinoComPortP = NULL;
@@ -35,12 +32,38 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 		*_error = OUTPUTERROR::WRITE_TIME_OUT;
 		return false;
 	}
+	mPinStates[_request.index].isOn = repsonse[7] != '1' ? true : false;
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
 	mArduinoComPortP->flush();
 	return true;
 }
 
-void OutputReader::ReadPinStates() {
+bool OutputReader::GetPinState(int _pinInd, OUTPUTERROR* _error) {
 	mArduinoComPortP->flushInput();
+	std::string input = std::to_string(_pinInd) + "00\n";
+	wxLogMessage("OPR: Parsing request %s", input);
+	std::string repsonse = "00000000";
+	int count = 0;
+	while (count < 10 && repsonse[6] != '1') {
+		size_t bytes_wrote = mArduinoComPortP->write(input);
+		repsonse = mArduinoComPortP->read(8);
+		wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
+		wxLogMessage("RE: Response %s", repsonse);
+		count += 1;
+	}
+	if (count > 9 && repsonse[6] != '1') {
+		wxLogMessage("OPR: Write timeout, error %s", repsonse);
+		*_error = OUTPUTERROR::WRITE_TIME_OUT;
+		return false;
+	}
+	*_error = OUTPUTERROR::NO_OUT_ERROR;
+	return repsonse[7] == '1' ? true : false;
+	mArduinoComPortP->flush();
+}
 
+void OutputReader::UpdatePinStates() {
+	OUTPUTERROR dummy;
+	for (int pin = MIN_OUTPUT_INDEX; pin <= MAX_OUTPUT_INDEX; pin++) {
+		mPinStates.insert({ pin,PinState(pin, GetPinState(pin, &dummy)) });
+	}
 }

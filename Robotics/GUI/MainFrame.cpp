@@ -7,6 +7,7 @@ MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(null
 	
 	//Logging
 	mLogger = new wxLogWindow(this, "Trace", true, false);
+	mRobotEngineP = new RobotEngine(port.ToStdString());
 	wxLog::SetLogLevel(wxLOG_Max);
 	wxLog::SetActiveTarget(mLogger);
 	wxLogMessage("Debugger active!");
@@ -20,8 +21,7 @@ MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(null
 	mQuitButton = new wxButton(mAnalogPanel, wxID_ANY, "Exit", wxPoint(1500, 50), wxSize(50, 35));
 	mQuitButton->Bind(wxEVT_BUTTON, &MainFrame::OnQuitButtonClick, this);
 
-
-
+	std::map<int, PinState> pinStates = mRobotEngineP->GetOutputPinStates();
 	mDigital1Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig1: OFF", wxPoint(50, 50), wxSize(150, 35));
 	mDigital1Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(1));
 	mDigital2Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig2: OFF", wxPoint(250, 50), wxSize(150, 35));
@@ -31,13 +31,23 @@ MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(null
 	mDigital4Toggle = new wxToggleButton(mAnalogPanel, wxID_ANY, "Dig4: OFF", wxPoint(650, 50), wxSize(150, 35));
 	mDigital4Toggle->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(4));
 	
-	mDigital1Toggle->SetBackgroundColour(wxColour(*wxRED));
-	mDigital2Toggle->SetBackgroundColour(wxColour(*wxRED));
-	mDigital3Toggle->SetBackgroundColour(wxColour(*wxRED));
-	mDigital4Toggle->SetBackgroundColour(wxColour(*wxRED));
+	mDigital1Toggle->SetBackgroundColour(pinStates[1].isOn ? wxColour(*wxGREEN) : wxColour(*wxRED));
+	mDigital2Toggle->SetBackgroundColour(pinStates[2].isOn ? wxColour(*wxGREEN) : wxColour(*wxRED));
+	mDigital3Toggle->SetBackgroundColour(pinStates[3].isOn ? wxColour(*wxGREEN) : wxColour(*wxRED));
+	mDigital4Toggle->SetBackgroundColour(pinStates[4].isOn ? wxColour(*wxGREEN) : wxColour(*wxRED));
+
+	mDigital1Toggle->SetLabelText(pinStates[1].isOn ? "Dig1: ON" : "Dig1: OFF");
+	mDigital2Toggle->SetLabelText(pinStates[2].isOn ? "Dig1: ON" : "Dig1: OFF");
+	mDigital3Toggle->SetLabelText(pinStates[3].isOn ? "Dig1: ON" : "Dig1: OFF");
+	mDigital4Toggle->SetLabelText(pinStates[4].isOn ? "Dig1: ON" : "Dig1: OFF");
+
+	mDigital1Toggle->SetValue(pinStates[1].isOn);
+	mDigital2Toggle->SetValue(pinStates[2].isOn);
+	mDigital3Toggle->SetValue(pinStates[3].isOn);
+	mDigital4Toggle->SetValue(pinStates[4].isOn);
 
 
-	mRobotEngineP = new RobotEngine(port.ToStdString());
+	
 
 	
 }

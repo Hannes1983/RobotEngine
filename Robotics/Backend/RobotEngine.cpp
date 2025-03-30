@@ -5,7 +5,9 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	try {
 		mArduinoComPortP = new serial::Serial(_port);
 		mInputReaderP = new InputReader(mArduinoComPortP);
+		
 		mOutputReaderP = new OutputReader(mArduinoComPortP);
+		
 		mComPortIsUp = true;
 		mArduinoComPortP->flushOutput();
 	}
@@ -17,6 +19,9 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	}
 	if (mArduinoComPortP != NULL && mArduinoComPortP->isOpen() ) {
 		wxLogMessage("RE::Constructor: Port %s open succesfully!", _port);
+		Sleep(6000); //ToDo: find better way to decide when port is ready
+		mOutputReaderP->UpdatePinStates();
+	
 	}
 	else {
 		wxLogError("RE::Constructor: Port could not be opened!");
@@ -39,9 +44,9 @@ void RobotEngine::Update() {
 	mWriteCurrRequest.pending = false;
 	while (true) {
 		mRequestMutex.lock();
+
 		if (mComPortIsUp && mWriteCurrRequest.pending) {
 			OUTPUTERROR err;
-			
 			if (mOutputReaderP->WriteToNode(mWriteCurrRequest, &err)) {
 			}
 			else {

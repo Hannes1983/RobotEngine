@@ -15,6 +15,7 @@ public:
 		mWriteCurrRequest = _request; 
 		mRequestMutex.unlock();
 	}
+	const std::map<int,PinState> GetOutputPinStates() const { return mOutputReaderP->GetPinstates(); }
 	bool PortIsUp() { return mComPortIsUp; }
 private:
 
