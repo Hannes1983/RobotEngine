@@ -7,31 +7,29 @@ InputReader::~InputReader() {
 	mArduinoComPortP = NULL;
 }
 
-bool InputReader::ReadFromNode(int _inputIndex, INPUTERROR* _error) {
+bool InputReader::ReadFromNode(int _pinInd, INPUTERROR* _error) {
 	mArduinoComPortP->flushInput();
-	if (_inputIndex < MIN_INPUT_INDEX || _inputIndex > MAX_INPUT_INDEX) {
+	if (_pinInd < MIN_INPUT_INDEX || _pinInd > MAX_INPUT_INDEX) {
 		*_error = INPUTERROR::INPUT_IND_OOR;
 		return false;
 	}
-	std::string input = "read", repsonse = "NK";
-	input.append(std::to_string(_inputIndex));
+	std::string input = std::to_string(_pinInd) + "00\n";
+	std::string repsonse = "00000000";
 	int count = 0;
-	while (count < 10 && (repsonse != "1" || repsonse != "0")) {
+	while (count < 10 && repsonse[6] != '1') {
 		size_t bytes_wrote = mArduinoComPortP->write(input);
-		repsonse = mArduinoComPortP->read(1);
-		wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
-		wxLogMessage("RE: Reponse %s", repsonse);
+		repsonse = mArduinoComPortP->read(8);
 		count += 1;
 	}
-	if (count > 9 && (repsonse != "1" || repsonse != "0")) {
-		wxLogError("RE: digital read timeout");
+	if (count > 9 && repsonse[6] != '1') {
 		*_error = INPUTERROR::READ_TIME_OUT;
-		mArduinoComPortP->flush();
 		return false;
 	}
 	*_error = INPUTERROR::NO_IN_ERROR;
-	return repsonse == "1" ? true : false;
+	bool oldState = mPinStates[_pinInd].isOn;
+	mPinStates[_pinInd].isOn = repsonse[7] != '1' ? true : false;
 	mArduinoComPortP->flush();
+	return oldState != mPinStates[_pinInd].isOn;
 
 	
 

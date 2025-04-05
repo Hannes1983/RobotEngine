@@ -1,4 +1,7 @@
 #include "RobotEngine.hpp"
+#include <chrono>
+
+using namespace std::chrono_literals;
 
 
 RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
@@ -9,7 +12,7 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 		mOutputReaderP = new OutputReader(mArduinoComPortP);
 		
 		mComPortIsUp = true;
-		mArduinoComPortP->flushOutput();
+		mArduinoComPortP->flush();
 	}
 	catch (...) {
 		wxLogError("RE::Constructor: Port %s could not be opened!", _port);
@@ -28,7 +31,8 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	}
 	
 	
-	mUpdateThreadP = new std::thread(&RobotEngine::Update, this);
+	mWriteThreadP = new std::thread(&RobotEngine::HandleRequest, this);
+	mReadThreadP = new std::thread(&RobotEngine::HandleInputs, this);
 
 }
 
@@ -39,13 +43,13 @@ RobotEngine::~RobotEngine() {
 
 }
 
-void RobotEngine::Update() {
+void RobotEngine::HandleRequest() {
 	wxLogMessage("RE: Update thread started");
 	mWriteCurrRequest.pending = false;
 	while (true) {
-		mRequestMutex.lock();
-
+		
 		if (mComPortIsUp && mWriteCurrRequest.pending) {
+			mCommMutex.lock();
 			OUTPUTERROR err;
 			if (mOutputReaderP->WriteToNode(mWriteCurrRequest, &err)) {
 			}
@@ -53,10 +57,37 @@ void RobotEngine::Update() {
 				wxLogMessage("RE: Request failed, err code %d", static_cast<int>(err));
 			}
 			mWriteCurrRequest.pending = false;
+			mCommMutex.unlock();
 		}
-		mRequestMutex.unlock();
-		Sleep(10);
+		
+		std::this_thread::sleep_for(100ms);;
 		
 	}
 
+}
+
+void RobotEngine::HandleInputs() {
+	wxLogMessage("RE: Read thread started");
+	while (true) {
+		if (mComPortIsUp) {
+			mCommMutex.lock();
+			bool stateUpdated = false;
+			for (int pin = MIN_INPUT_INDEX; pin <= MAX_INPUT_INDEX; pin++) {
+				INPUTERROR err;
+				std::this_thread::sleep_for(10ms);
+				bool currState = mInputReaderP->ReadFromNode(pin, &err);
+				stateUpdated &= currState;
+				if (err != INPUTERROR::NO_IN_ERROR) {
+					wxLogError("RE: Error rading node %d, error %d", pin, static_cast<int>(err));
+				}
+				wxLogMessage("State %d: %d", pin, static_cast<int>(currState));
+			}
+			mCommMutex.unlock();
+			if (stateUpdated) {
+				wxLogMessage("RE: input state changed!");
+				CopyInputPinStates();
+			}
+		std::this_thread::sleep_for(100ms);
+		}
+	}
 }

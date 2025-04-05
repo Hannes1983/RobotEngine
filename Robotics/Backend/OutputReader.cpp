@@ -57,8 +57,10 @@ bool OutputReader::GetPinState(int _pinInd, OUTPUTERROR* _error) {
 		return false;
 	}
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
-	return repsonse[7] == '1' ? true : false;
 	mArduinoComPortP->flush();
+
+	return repsonse[7] == '1' ? true : false;
+	
 }
 
 void OutputReader::UpdatePinStates() {
