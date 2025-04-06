@@ -31,8 +31,7 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	}
 	
 	
-	mWriteThreadP = new std::thread(&RobotEngine::HandleRequest, this);
-	mReadThreadP = new std::thread(&RobotEngine::HandleInputs, this);
+	mUpdateThreadP = new std::thread(&RobotEngine::UpdateFromController, this);
 
 }
 
@@ -44,50 +43,54 @@ RobotEngine::~RobotEngine() {
 }
 
 void RobotEngine::HandleRequest() {
-	wxLogMessage("RE: Update thread started");
-	mWriteCurrRequest.pending = false;
-	while (true) {
-		
-		if (mComPortIsUp && mWriteCurrRequest.pending) {
-			mCommMutex.lock();
-			OUTPUTERROR err;
-			if (mOutputReaderP->WriteToNode(mWriteCurrRequest, &err)) {
-			}
-			else {
-				wxLogMessage("RE: Request failed, err code %d", static_cast<int>(err));
-			}
-			mWriteCurrRequest.pending = false;
-			mCommMutex.unlock();
-		}
-		
-		std::this_thread::sleep_for(100ms);;
-		
-	}
 
+	if (mComPortIsUp && mWriteCurrRequest.pending) {
+		mCommMutex.lock();
+		OUTPUTERROR err;
+		if (mOutputReaderP->WriteToNode(mWriteCurrRequest, &err)) {
+		}
+		else {
+			wxLogMessage("RE: Request failed, err code %d", static_cast<int>(err));
+		}
+		mWriteCurrRequest.pending = false;
+		mCommMutex.unlock();
+	}
+		
+	
+		
 }
 
+
 void RobotEngine::HandleInputs() {
-	wxLogMessage("RE: Read thread started");
-	while (true) {
-		if (mComPortIsUp) {
-			mCommMutex.lock();
-			bool stateUpdated = false;
-			for (int pin = MIN_INPUT_INDEX; pin <= MAX_INPUT_INDEX; pin++) {
-				INPUTERROR err;
-				std::this_thread::sleep_for(10ms);
-				bool currState = mInputReaderP->ReadFromNode(pin, &err);
-				stateUpdated &= currState;
-				if (err != INPUTERROR::NO_IN_ERROR) {
-					wxLogError("RE: Error rading node %d, error %d", pin, static_cast<int>(err));
-				}
-				wxLogMessage("State %d: %d", pin, static_cast<int>(currState));
-			}
-			mCommMutex.unlock();
-			if (stateUpdated) {
-				wxLogMessage("RE: input state changed!");
-				CopyInputPinStates();
-			}
-		std::this_thread::sleep_for(100ms);
+	
+	if (mComPortIsUp && mReadCurrRequest.pending) {
+		mCommMutex.lock();
+		bool stateUpdated = false;
+		
+		INPUTERROR err;
+		std::this_thread::sleep_for(10ms);
+		bool currState = mInputReaderP->ReadFromNode(mReadCurrRequest.index, &err);
+		stateUpdated &= currState;
+		if (err != INPUTERROR::NO_IN_ERROR) {
+			wxLogError("RE: Error rading node %d, error %d", mReadCurrRequest.index, static_cast<int>(err));
 		}
+		wxLogMessage("State %d: %d", mReadCurrRequest.index, static_cast<int>(currState));
+		
+		mCommMutex.unlock();
+		
+		mReadCurrRequest.pending = false;
+	                                                           
 	}
+}
+
+void RobotEngine::UpdateFromController() {
+	mWriteCurrRequest.pending = false;
+	mReadCurrRequest.pending = false;
+	wxLogMessage("RE: Update thread started");
+	while (true) {
+		HandleRequest();
+		HandleInputs();
+		std::this_thread::sleep_for(100ms);
+	}
+
 }

@@ -15,14 +15,19 @@ public:
 		mWriteCurrRequest = _request; 
 		mCommMutex.unlock();
 	}
-	const std::map<int,PinState> GetOutputPinStates() const { return mOutputReaderP->GetPinstates(); }
+	void SetReadRequest(const PinState _request) {
+		mCommMutex.lock();
+		mReadCurrRequest = _request;
+		mCommMutex.unlock();
+	}
+	std::map<int,PinState>* GetOutputPinStates() { return mOutputReaderP->GetPinstates(); }
+	std::map<int, PinState>* GetInputPinStates() { return mInputReaderP->GetPinstates(); }
+
 	bool PortIsUp() { return mComPortIsUp; }
 private:
-
+	void UpdateFromController();
 	void HandleRequest();
 	void HandleInputs();
-
-	void CopyInputPinStates() { mCurrInputStates = mInputReaderP->GetPinstates(); }
 
 	serial::Serial* mArduinoComPortP = NULL;
 	InputReader* mInputReaderP = NULL;
@@ -30,10 +35,9 @@ private:
 	bool mDigitalIn2Active;
 	bool mComPortIsUp;
 	PinState mWriteCurrRequest;
-	std::map<int, PinState> mCurrInputStates;
+	PinState mReadCurrRequest;
 
-	std::thread* mWriteThreadP;
-	std::thread* mReadThreadP;
+	std::thread* mUpdateThreadP;
 	std::mutex mCommMutex;
 
 

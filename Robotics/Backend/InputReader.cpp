@@ -2,9 +2,14 @@
 
 InputReader::InputReader(serial::Serial* _comPortP) {
 	mArduinoComPortP = _comPortP;
+	mPinStatesP = new std::map<int, PinState>;
+	for (int ind = MIN_INPUT_INDEX; ind <= MAX_INPUT_INDEX; ind++) {
+		(*mPinStatesP).insert({ ind, PinState(ind, false, false) });
+	}
 }
 InputReader::~InputReader() {
 	mArduinoComPortP = NULL;
+	delete mPinStatesP;
 }
 
 bool InputReader::ReadFromNode(int _pinInd, INPUTERROR* _error) {
@@ -26,10 +31,10 @@ bool InputReader::ReadFromNode(int _pinInd, INPUTERROR* _error) {
 		return false;
 	}
 	*_error = INPUTERROR::NO_IN_ERROR;
-	bool oldState = mPinStates[_pinInd].isOn;
-	mPinStates[_pinInd].isOn = repsonse[7] != '1' ? true : false;
+	bool oldState = (*mPinStatesP)[_pinInd].isOn;
+	(*mPinStatesP)[_pinInd].isOn = repsonse[7] != '1' ? true : false;
 	mArduinoComPortP->flush();
-	return oldState != mPinStates[_pinInd].isOn;
+	return oldState != (*mPinStatesP)[_pinInd].isOn;
 
 	
 

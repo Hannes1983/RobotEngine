@@ -3,9 +3,14 @@
 
 OutputReader::OutputReader(serial::Serial* _comPortP) {
 	mArduinoComPortP = _comPortP;
+	mPinStatesP = new std::map<int, PinState>;
+	for (int ind = MIN_INPUT_INDEX; ind <= MAX_INPUT_INDEX; ind++) {
+		(*mPinStatesP).insert({ ind, PinState(ind, false, false) });
+	}
 }
 OutputReader::~OutputReader() {
 	mArduinoComPortP = NULL;
+	delete mPinStatesP;
 }
 
 bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
@@ -32,7 +37,7 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 		*_error = OUTPUTERROR::WRITE_TIME_OUT;
 		return false;
 	}
-	mPinStates[_request.index].isOn = repsonse[7] != '1' ? true : false;
+	(*mPinStatesP)[_request.index].isOn = repsonse[7] != '1' ? true : false;
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
 	mArduinoComPortP->flush();
 	return true;
@@ -66,6 +71,6 @@ bool OutputReader::GetPinState(int _pinInd, OUTPUTERROR* _error) {
 void OutputReader::UpdatePinStates() {
 	OUTPUTERROR dummy;
 	for (int pin = MIN_OUTPUT_INDEX; pin <= MAX_OUTPUT_INDEX; pin++) {
-		mPinStates.insert({ pin,PinState(pin, GetPinState(pin, &dummy)) });
+		(*mPinStatesP).insert({ pin,PinState(pin, GetPinState(pin, &dummy)) });
 	}
 }

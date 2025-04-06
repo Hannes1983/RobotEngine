@@ -34,5 +34,8 @@ private:
 	wxToggleButton* mDigital3Toggle;
 	wxToggleButton* mDigital4Toggle;
 
+	std::map<int, PinState>* mInputStatesP;
+	std::map<int, PinState>* mOutputStatesP;
+
 };
 
