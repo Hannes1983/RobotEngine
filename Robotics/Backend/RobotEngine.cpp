@@ -31,8 +31,7 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	}
 	
 	
-	mUpdateThreadP = new std::thread(&RobotEngine::UpdateFromController, this);
-
+	mIOThreadP = new std::thread(&RobotEngine::UpdateFromController, this);
 }
 
 RobotEngine::~RobotEngine() {
@@ -78,8 +77,7 @@ void RobotEngine::HandleInputs() {
 		
 		mCommMutex.unlock();
 		
-		mReadCurrRequest.pending = false;
-	                                                           
+		mReadCurrRequest.pending = false;                                                         
 	}
 }
 

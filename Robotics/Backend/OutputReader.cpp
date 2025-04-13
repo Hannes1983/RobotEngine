@@ -4,7 +4,7 @@
 OutputReader::OutputReader(serial::Serial* _comPortP) {
 	mArduinoComPortP = _comPortP;
 	mPinStatesP = new std::map<int, PinState>;
-	for (int ind = MIN_INPUT_INDEX; ind <= MAX_INPUT_INDEX; ind++) {
+	for (int ind = MIN_OUTPUT_INDEX; ind <= MAX_OUTPUT_INDEX; ind++) {
 		(*mPinStatesP).insert({ ind, PinState(ind, false, false) });
 	}
 }
@@ -28,8 +28,6 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 	while (count < 10 && repsonse[6] != '1') {
 		size_t bytes_wrote = mArduinoComPortP->write(input);
 		repsonse = mArduinoComPortP->read(8);
-		wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
-		wxLogMessage("RE: Response %s", repsonse);
 		count += 1;
 	}
 	if (count > 9 && repsonse[6] != '1') {
@@ -37,7 +35,8 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 		*_error = OUTPUTERROR::WRITE_TIME_OUT;
 		return false;
 	}
-	(*mPinStatesP)[_request.index].isOn = repsonse[7] != '1' ? true : false;
+	wxLogMessage("RE: Response %s", repsonse);
+	(*mPinStatesP)[_request.index].isOn = repsonse[7] == '1' ? true : false;
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
 	mArduinoComPortP->flush();
 	return true;

@@ -1,7 +1,6 @@
 #pragma once
 #include "InputReader.h"
 #include "OutputReader.h"
-#include <thread>
 #include <mutex>
 
 class RobotEngine
@@ -22,10 +21,10 @@ public:
 	}
 	std::map<int,PinState>* GetOutputPinStates() { return mOutputReaderP->GetPinstates(); }
 	std::map<int, PinState>* GetInputPinStates() { return mInputReaderP->GetPinstates(); }
+	void UpdateFromController();
 
 	bool PortIsUp() { return mComPortIsUp; }
 private:
-	void UpdateFromController();
 	void HandleRequest();
 	void HandleInputs();
 
@@ -37,7 +36,7 @@ private:
 	PinState mWriteCurrRequest;
 	PinState mReadCurrRequest;
 
-	std::thread* mUpdateThreadP;
+	std::thread* mIOThreadP;
 	std::mutex mCommMutex;
 
 
