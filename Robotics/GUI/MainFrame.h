@@ -34,15 +34,7 @@ private:
 	wxButton* mQuitButton;
 	std::map<int, wxToggleButton*> mOutputButtons;
 	std::map<int, wxButton*> mInputButtons;
-	wxToggleButton* mDigital1Toggle;
-	wxToggleButton* mDigital2Toggle;
-	wxToggleButton* mDigital3Toggle;
-	wxToggleButton* mDigital4Toggle;
-
-	wxButton* mInputButton1;
-	wxButton* mInputButton2;
-	wxButton* mInputButton3;
-	wxButton* mInputButton4;
+	
 
 	std::map<int, PinState>* mInputStatesP;
 	std::map<int, PinState>* mOutputStatesP;

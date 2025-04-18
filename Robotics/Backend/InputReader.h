@@ -9,7 +9,7 @@ class InputReader
 public:
 	InputReader(serial::Serial* _comPortP);
 	~InputReader();
-	bool ReadFromNode(int _pinInd, INPUTERROR* _error);
+	void ReadFromNode(int _pinInd, INPUTERROR* _error);
 	std::map<int, PinState>* GetPinstates()  { return mPinStatesP; }
 
 private:

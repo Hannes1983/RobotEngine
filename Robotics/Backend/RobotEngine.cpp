@@ -64,20 +64,18 @@ void RobotEngine::HandleInputs() {
 	
 	if (mComPortIsUp && mReadCurrRequest.pending) {
 		mCommMutex.lock();
-		bool stateUpdated = false;
 		
 		INPUTERROR err;
 		std::this_thread::sleep_for(10ms);
-		bool currState = mInputReaderP->ReadFromNode(mReadCurrRequest.index, &err);
-		stateUpdated &= currState;
+		mInputReaderP->ReadFromNode(mReadCurrRequest.index, &err);
 		if (err != INPUTERROR::NO_IN_ERROR) {
 			wxLogError("RE: Error rading node %d, error %d", mReadCurrRequest.index, static_cast<int>(err));
 		}
-		wxLogMessage("State %d: %d", mReadCurrRequest.index, static_cast<int>(currState));
 		
+		mReadCurrRequest.pending = false;
 		mCommMutex.unlock();
 		
-		mReadCurrRequest.pending = false;                                                         
+	                                                       
 	}
 }
 

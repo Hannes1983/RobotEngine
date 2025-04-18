@@ -22,7 +22,6 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 	}
 	std::string input = std::to_string(_request.index) + "1";
 	input += _request.isOn ? "1\n" : "0\n";
-	wxLogMessage("OPR: Parsing request %s", input);
 	std::string repsonse = "00000000";
 	int count = 0;
 	while (count < 10 && repsonse[6] != '1') {
@@ -35,7 +34,6 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 		*_error = OUTPUTERROR::WRITE_TIME_OUT;
 		return false;
 	}
-	wxLogMessage("RE: Response %s", repsonse);
 	(*mPinStatesP)[_request.index].isOn = repsonse[7] == '1' ? true : false;
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
 	mArduinoComPortP->flush();
@@ -45,14 +43,12 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 bool OutputReader::GetPinState(int _pinInd, OUTPUTERROR* _error) {
 	mArduinoComPortP->flushInput();
 	std::string input = std::to_string(_pinInd) + "00\n";
-	wxLogMessage("OPR: Parsing request %s", input);
 	std::string repsonse = "00000000";
 	int count = 0;
 	while (count < 10 && repsonse[6] != '1') {
 		size_t bytes_wrote = mArduinoComPortP->write(input);
 		repsonse = mArduinoComPortP->read(8);
-		wxLogMessage("RE, It %d, bytes written %d", count, bytes_wrote);
-		wxLogMessage("RE: Response %s", repsonse);
+	
 		count += 1;
 	}
 	if (count > 9 && repsonse[6] != '1') {
