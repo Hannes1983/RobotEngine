@@ -11,7 +11,7 @@ set(headers_hpp ${headers_hpp}
 	RobotEngine.hpp
 	Constants.hpp
 	BaseReader.h
-	SiReader.h
+	SimReader.h
 )
 
 

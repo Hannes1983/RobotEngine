@@ -6,19 +6,19 @@
 #include <map>
 
 
-class OutputReader
-{
+class BaseReader {
 public:
-	OutputReader(serial::Serial* _comPortP);
-	~OutputReader();
-	bool WriteToNode(PinState _request, OUTPUTERROR* _error);
+	BaseReader(serial::Serial* _comPortP = NULL);
+	~BaseReader();
+	virtual bool WriteToNode(PinState _request, OUTPUTERROR* _error) { return false; };
+	virtual void ReadFromNode(int _pinInd, INPUTERROR* _error) {};
 	std::map<int,PinState>* GetPinstates() { return mPinStatesP; }
-	void UpdatePinStates();
+	virtual void UpdatePinStates() {};
 
-private:
+protected:
 
-	bool GetPinState(int _pinInd, OUTPUTERROR* _error);
+	virtual bool GetPinState(int _pinInd, OUTPUTERROR* _error) { return false; };
 	serial::Serial* mArduinoComPortP = NULL;
-	std::map<int,PinState>* mPinStatesP;
+	std::map<int,PinState>* mPinStatesP = NULL;
 };
 

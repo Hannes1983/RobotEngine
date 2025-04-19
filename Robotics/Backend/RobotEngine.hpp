@@ -1,6 +1,8 @@
 #pragma once
 #include "InputReader.h"
 #include "OutputReader.h"
+
+# include "SimReader.h"
 #include <mutex>
 
 class RobotEngine
@@ -29,8 +31,8 @@ private:
 	void HandleInputs();
 
 	serial::Serial* mArduinoComPortP = NULL;
-	InputReader* mInputReaderP = NULL;
-	OutputReader* mOutputReaderP = NULL;
+	BaseReader* mInputReaderP = NULL;
+	BaseReader* mOutputReaderP = NULL;
 	bool mDigitalIn2Active;
 	bool mComPortIsUp;
 	PinState mWriteCurrRequest;
@@ -38,6 +40,8 @@ private:
 
 	std::thread* mIOThreadP;
 	std::mutex mCommMutex;
+
+	bool mSimulated;
 
 
 

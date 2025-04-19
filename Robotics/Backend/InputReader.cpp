@@ -1,7 +1,6 @@
 #include "InputReader.h"
 
-InputReader::InputReader(serial::Serial* _comPortP) {
-	mArduinoComPortP = _comPortP;
+InputReader::InputReader(serial::Serial* _comPortP) : BaseReader(_comPortP) {
 	mPinStatesP = new std::map<int, PinState>;
 	for (int ind = MIN_INPUT_INDEX; ind <= MAX_INPUT_INDEX; ind++) {
 		(*mPinStatesP).insert({ ind, PinState(ind, false, false) });

@@ -1,24 +1,13 @@
 #pragma once
-#include "../third-party/include/serial/serial.h"
-#include "Constants.hpp"
-#include <list>
-#include <wx/wx.h>
-#include <map>
+#include "BaseReader.h"
 
 
-class OutputReader
+class SimReader : public BaseReader
 {
 public:
-	OutputReader(serial::Serial* _comPortP);
-	~OutputReader();
+	SimReader();
+	~SimReader();
 	bool WriteToNode(PinState _request, OUTPUTERROR* _error);
-	std::map<int,PinState>* GetPinstates() { return mPinStatesP; }
-	void UpdatePinStates();
-
-private:
-
-	bool GetPinState(int _pinInd, OUTPUTERROR* _error);
-	serial::Serial* mArduinoComPortP = NULL;
-	std::map<int,PinState>* mPinStatesP;
+	void ReadFromNode(int _pinInd, INPUTERROR* _error);
 };
 

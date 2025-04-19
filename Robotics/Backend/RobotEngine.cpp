@@ -5,29 +5,38 @@ using namespace std::chrono_literals;
 
 
 RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
-	try {
-		mArduinoComPortP = new serial::Serial(_port);
-		mInputReaderP = new InputReader(mArduinoComPortP);
-		
-		mOutputReaderP = new OutputReader(mArduinoComPortP);
-		
-		mComPortIsUp = true;
-		mArduinoComPortP->flush();
-	}
-	catch (...) {
-		wxLogError("RE::Constructor: Port %s could not be opened!", _port);
-		delete mArduinoComPortP;
-		mArduinoComPortP = NULL;
-		mComPortIsUp = false;
-	}
-	if (mArduinoComPortP != NULL && mArduinoComPortP->isOpen() ) {
-		wxLogMessage("RE::Constructor: Port %s open succesfully!", _port);
-		Sleep(6000); //ToDo: find better way to decide when port is ready
-		mOutputReaderP->UpdatePinStates();
-	
+	mSimulated = (_port == "Sim");
+
+
+	if (mSimulated) {
+		mInputReaderP = new SimReader();
+		mOutputReaderP = new SimReader();
 	}
 	else {
-		wxLogError("RE::Constructor: Port could not be opened!");
+		try {
+			mArduinoComPortP = new serial::Serial(_port);
+			mInputReaderP = new InputReader(mArduinoComPortP);
+
+			mOutputReaderP = new OutputReader(mArduinoComPortP);
+
+			mComPortIsUp = true;
+			mArduinoComPortP->flush();
+		}
+		catch (...) {
+			wxLogError("RE::Constructor: Port %s could not be opened!", _port);
+			delete mArduinoComPortP;
+			mArduinoComPortP = NULL;
+			mComPortIsUp = false;
+		}
+		if (mArduinoComPortP != NULL && mArduinoComPortP->isOpen()) {
+			wxLogMessage("RE::Constructor: Port %s open succesfully!", _port);
+			Sleep(6000); //ToDo: find better way to decide when port is ready
+			mOutputReaderP->UpdatePinStates();
+
+		}
+		else {
+			wxLogError("RE::Constructor: Port could not be opened!");
+		}
 	}
 	
 	
