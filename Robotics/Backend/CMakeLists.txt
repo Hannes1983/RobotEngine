@@ -2,12 +2,16 @@ set(sources_cpp ${sources_cpp}
     InputReader.cpp 
 	OutputReader.cpp
 	RobotEngine.cpp
+	BaseReader.cpp
+	SimReader.cpp
 )
 set(headers_hpp ${headers_hpp} 
     InputReader.h 
 	OutputReader.h
 	RobotEngine.hpp
 	Constants.hpp
+	BaseReader.h
+	SiReader.h
 )
 
 
