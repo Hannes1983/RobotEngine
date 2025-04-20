@@ -11,10 +11,10 @@ enum INPUTERROR {
 	INPUT_IND_OOR
 };
 
-const int MIN_OUTPUT_INDEX = 1;
-const int MAX_OUTPUT_INDEX = 4;
-const int MIN_INPUT_INDEX = 5;
-const int MAX_INPUT_INDEX = 8;
+const int MIN_OUTPUT_INDEX = 2;
+const int MAX_OUTPUT_INDEX = 5;
+const int MIN_INPUT_INDEX = 6;
+const int MAX_INPUT_INDEX = 9;
 
 //Arduino comm. protocol
 // Request XYZ: X = pin, Y = write(1) / read(0), Z = write state (High(1) / Low(0))

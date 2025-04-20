@@ -31,6 +31,7 @@ void InputReader::ReadFromNode(int _pinInd, INPUTERROR* _error) {
 	}
 	*_error = INPUTERROR::NO_IN_ERROR;
 	(*mPinStatesP)[_pinInd].isOn = repsonse[7] == '1' ? true : false;
+	wxLogMessage("RE: handled read from pin %d, state %d", _pinInd, (*mPinStatesP)[_pinInd].isOn);
 	mArduinoComPortP->flush();
 
 	

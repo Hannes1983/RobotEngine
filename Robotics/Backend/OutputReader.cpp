@@ -36,6 +36,7 @@ bool OutputReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 	(*mPinStatesP)[_request.index].isOn = repsonse[7] == '1' ? true : false;
 	*_error = OUTPUTERROR::NO_OUT_ERROR;
 	mArduinoComPortP->flush();
+	wxLogMessage("RE: handled write to pin %d, state %d", _request.index, (*mPinStatesP)[_request.index].isOn);
 	return true;
 }
 

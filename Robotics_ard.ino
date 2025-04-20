@@ -35,15 +35,15 @@ void setup() {
   inputString.reserve(1000);
   delay(1000);
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(1, OUTPUT);
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
   
-  pinMode(5, INPUT);
   pinMode(6, INPUT);
   pinMode(7, INPUT);
   pinMode(8, INPUT);
+  pinMode(9, INPUT);
 
   pinMode(13,OUTPUT);
 

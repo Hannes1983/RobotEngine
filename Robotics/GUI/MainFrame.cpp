@@ -27,15 +27,15 @@ MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(null
 	mQuitButton->Bind(wxEVT_BUTTON, &MainFrame::OnQuitButtonClick, this);
 	for (int ind = MIN_OUTPUT_INDEX; ind <= MAX_OUTPUT_INDEX; ind++) {
 		wxString btnTxt = "Out" + wxString::Format(wxT("%i"), ind);
-		int xpos = ind == 1 || ind == 2 ? 50 : 175;
-		int ypos = ind == 1 || ind == 3 ? 50 : 100;
+		int xpos = ind == 2 || ind == 3 ? 50 : 175;
+		int ypos = ind == 2 || ind == 4 ? 50 : 100;
 		mOutputButtons[ind] = new wxToggleButton(mIOPanel, wxID_ANY,btnTxt, wxPoint(xpos, ypos), wxSize(100, 35));
 		mOutputButtons[ind]->Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, &MainFrame::OnDigitalButtonToggle, this, wxID_ANY, wxID_ANY, new ButtonArg(ind));
 	}
 	for (int ind = MIN_INPUT_INDEX; ind <= MAX_INPUT_INDEX; ind++) {
 		wxString btnTxt = "In" + wxString::Format(wxT("%i"), ind);
-		int xpos = ind == 5 || ind == 6 ? 360 : 485;
-		int ypos = ind == 5 || ind == 7 ? 50 : 100;
+		int xpos = ind == 6 || ind == 7 ? 360 : 485;
+		int ypos = ind == 6 || ind == 8 ? 50 : 100;
 		mInputButtons[ind] = new wxButton(mIOPanel, wxID_ANY, btnTxt, wxPoint(xpos, ypos), wxSize(100, 35));
 		mInputButtons[ind]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnInputButtonClick, this, wxID_ANY, wxID_ANY, new ButtonArg(ind));
 	}
@@ -89,14 +89,10 @@ void MainFrame::Update() {
 	while (true) {
 		for (int ind = MIN_OUTPUT_INDEX; ind <= MAX_OUTPUT_INDEX; ind++) {
 			bool isOn = (*mOutputStatesP)[ind].isOn;
-			wxString btnTxt = "Out" + wxString::Format(wxT("%i"), ind);
-			mOutputButtons[ind]->SetLabelText(btnTxt);
 			mOutputButtons[ind]->SetBackgroundColour(isOn ? wxColour(*wxGREEN) : wxColour(*wxRED));
 		}
 		for (int ind = MIN_INPUT_INDEX; ind <= MAX_INPUT_INDEX; ind++) {
-			wxString btnTxt = "In" + wxString::Format(wxT("%i"), ind);
 			bool isOn = (*mInputStatesP)[ind].isOn;
-			mInputButtons[ind]->SetLabelText(btnTxt);
 			mInputButtons[ind]->SetBackgroundColour(isOn ? wxColour(*wxGREEN) : wxColour(*wxRED));
 		}
 		std::this_thread::sleep_for(100ms);

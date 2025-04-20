@@ -6,8 +6,6 @@ using namespace std::chrono_literals;
 
 RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	mSimulated = (_port == "Sim");
-
-
 	if (mSimulated) {
 		mInputReaderP = new SimReader();
 		mOutputReaderP = new SimReader();
