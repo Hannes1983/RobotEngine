@@ -9,6 +9,7 @@ RobotEngine::RobotEngine(std::string _port, const int _baudRate) {
 	if (mSimulated) {
 		mInputReaderP = new SimReader();
 		mOutputReaderP = new SimReader();
+		mComPortIsUp = true;
 	}
 	else {
 		try {

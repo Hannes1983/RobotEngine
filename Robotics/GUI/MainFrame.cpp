@@ -39,11 +39,12 @@ MainFrame::MainFrame(const wxString& title, const wxString& port) : wxFrame(null
 		mInputButtons[ind] = new wxButton(mIOPanel, wxID_ANY, btnTxt, wxPoint(xpos, ypos), wxSize(100, 35));
 		mInputButtons[ind]->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &MainFrame::OnInputButtonClick, this, wxID_ANY, wxID_ANY, new ButtonArg(ind));
 	}
-	
+	wxLogMessage("Buttons created.");
+
 	//Get pointers to pin states
 	mInputStatesP = mRobotEngineP->GetInputPinStates();
 	mOutputStatesP = mRobotEngineP->GetOutputPinStates();
-	
+	wxLogMessage("IO states created.");
 
 	mMonitorThreadP = new std::thread(&MainFrame::Update, this);
 
@@ -66,6 +67,7 @@ void MainFrame::OnDigitalButtonToggle(wxCommandEvent& event) {
 }
 
 void MainFrame::OnInputButtonClick(wxCommandEvent& event) {
+	//Get userData
 	ButtonArg* data = static_cast<ButtonArg*>(event.GetEventUserData());
 	PinState request(data->buttonNumber);
 	mRobotEngineP->SetReadRequest(request);

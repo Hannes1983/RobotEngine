@@ -18,6 +18,7 @@ bool SimReader::WriteToNode(PinState _request, OUTPUTERROR* _error) {
 		return false;
 	}
 	(*mPinStatesP)[_request.index].isOn = _request.isOn;
+	wxLogMessage("RE: handeled write request pin %d, state %d", _request.index, (*mPinStatesP)[_request.index].isOn);
 	return true;
 }
 
@@ -27,4 +28,5 @@ void SimReader::ReadFromNode(int _pinInd, INPUTERROR* _error) {
 		return;
 	}
 	(*mPinStatesP)[_pinInd].isOn = !(*mPinStatesP)[_pinInd].isOn;
+	wxLogMessage("RE: handeled read request pin %d, state %d", _pinInd, (*mPinStatesP)[_pinInd].isOn);
 };
